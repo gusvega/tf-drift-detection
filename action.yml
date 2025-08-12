@@ -1,0 +1,20 @@
+name: "Terraform Drift Detection"
+description: "Detect drift by comparing Terraform state to live resources (containerized)."
+author: "gusvega"
+branding:
+  icon: "alert-triangle"
+  color: "yellow"
+
+inputs:
+  workdir:
+    description: "Working directory"
+    required: false
+    default: "."
+
+outputs:
+  drift_found:
+    description: "true if drift detected"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"

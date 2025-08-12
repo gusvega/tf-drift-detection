@@ -1,0 +1,33 @@
+name: Publish Containerized GitHub Action to GHCR
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/gusvega-dev/tf-drift-detection
+  VERSION: 'v0.1.0'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Build and Tag Docker Image
+        run: docker build -t $IMAGE_NAME:$VERSION .
+
+      - name: Push Docker Image
+        run: docker push $IMAGE_NAME:$VERSION
+
+      - name: Tag Repo
+        run: |
+          git tag -f $VERSION
+          git push origin -f $VERSION
